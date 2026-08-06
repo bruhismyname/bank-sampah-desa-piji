@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bank Sampah Desa Piji | KKNT-47 UNDIP</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Plus+Jakarta+Sans:wght@700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-fixed-variant": "#004395",
+                    "primary-container": "#006948",
+                    "surface-variant": "#e0e3e5",
+                    "tertiary": "#00418f",
+                    "primary-fixed": "#9ff4ca",
+                    "surface-container-highest": "#e0e3e5",
+                    "tertiary-container": "#0057bc",
+                    "surface-container-low": "#f2f4f6",
+                    "warning": "#b45309",
+                    "surface-dim": "#d8dadc",
+                    "error": "#ba1a1a",
+                    "success-bg": "#dcfce7",
+                    "surface-container": "#eceef0",
+                    "warning-bg": "#fef3c7",
+                    "tertiary-fixed": "#d8e2ff",
+                    "secondary-fixed": "#dae2fd",
+                    "on-secondary-container": "#5c647a",
+                    "surface-container-high": "#e6e8ea",
+                    "on-tertiary": "#ffffff",
+                    "secondary-fixed-dim": "#bec6e0",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "on-primary": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-tertiary-fixed": "#001a42",
+                    "on-primary-container": "#91e5bc",
+                    "primary-fixed-dim": "#83d7ae",
+                    "secondary": "#565e74",
+                    "surface": "#f7f9fb",
+                    "on-primary-fixed": "#002114",
+                    "surface-bright": "#f7f9fb",
+                    "inverse-surface": "#2d3133",
+                    "primary": "#004f35",
+                    "outline": "#6f7a72",
+                    "on-surface": "#191c1e",
+                    "on-tertiary-container": "#c2d3ff",
+                    "background": "#f7f9fb",
+                    "on-surface-variant": "#3f4943",
+                    "secondary-container": "#dae2fd",
+                    "tertiary-fixed-dim": "#adc6ff",
+                    "on-primary-fixed-variant": "#005237",
+                    "on-error-container": "#93000a",
+                    "error-container": "#ffdad6",
+                    "surface-tint": "#076c4b",
+                    "body-text": "#64748b",
+                    "on-background": "#191c1e",
+                    "on-secondary": "#ffffff",
+                    "success": "#15803d",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed": "#131b2e",
+                    "inverse-primary": "#83d7ae",
+                    "on-error": "#ffffff",
+                    "outline-variant": "#bec9c1",
+                    "surface-border": "#f1f5f9"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "1rem",
+                    "container-max": "1280px",
+                    "gutter": "1.5rem",
+                    "stack-sm": "0.5rem",
+                    "stack-md": "1rem",
+                    "margin-desktop": "2.5rem",
+                    "stack-lg": "2rem"
+            },
+            "fontFamily": {
+                    "display-lg-mobile": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-sm": [
+                            "Inter"
+                    ],
+                    "display-lg": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "body-md": [
+                            "Inter"
+                    ],
+                    "body-lg": [
+                            "Inter"
+                    ],
+                    "headline-sm": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-md": [
+                            "Inter"
+                    ],
+                    "headline-md": [
+                            "Plus Jakarta Sans"
+                    ],
+                    "label-sm": [
+                            "Inter"
+                    ]
+            },
+            "fontSize": {
+                    "display-lg-mobile": [
+                            "32px",
+                            {
+                                    "lineHeight": "1.25",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "body-sm": [
+                            "14px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "display-lg": [
+                            "48px",
+                            {
+                                    "lineHeight": "1.2",
+                                    "letterSpacing": "-0.02em",
+                                    "fontWeight": "800"
+                            }
+                    ],
+                    "body-md": [
+                            "16px",
+                            {
+                                    "lineHeight": "1.5",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "body-lg": [
+                            "18px",
+                            {
+                                    "lineHeight": "1.6",
+                                    "fontWeight": "400"
+                            }
+                    ],
+                    "headline-sm": [
+                            "24px",
+                            {
+                                    "lineHeight": "1.4",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-md": [
+                            "14px",
+                            {
+                                    "lineHeight": "1",
+                                    "letterSpacing": "0.05em",
+                                    "fontWeight": "600"
+                            }
+                    ],
+                    "headline-md": [
+                            "30px",
+                            {
+                                    "lineHeight": "1.3",
+                                    "fontWeight": "700"
+                            }
+                    ],
+                    "label-sm": [
+                            "12px",
+                            {
+                                    "lineHeight": "1",
+                                    "fontWeight": "500"
+                            }
+                    ]
+            }
+        },
+        },
+      }
+    </script>
+</head>
+<body class="bg-background text-on-surface font-body-md antialiased pt-20">
+<!-- Top Navigation Bar (Shared Component) -->
+<header class="bg-surface/90 dark:bg-surface-container/90 backdrop-blur-md fixed top-0 left-0 w-full z-50 shadow-sm">
+<div class="flex justify-between items-center h-20 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto border-b border-surface-border dark:border-outline-variant">
+<!-- Brand -->
+<a class="font-display-lg-mobile text-display-lg-mobile font-extrabold text-primary dark:text-primary-fixed-dim" href="#">
+                Bank Sampah Desa Piji | KKNT-47 UNDIP
+            </a>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex gap-gutter items-center">
+<a aria-current="page" class="font-label-md text-label-md text-primary font-bold border-b-2 border-primary pb-1 hover:text-primary-container transition-colors duration-200" href="#">Beranda</a>
+<a class="font-label-md text-label-md text-on-surface-variant font-medium hover:text-primary-container transition-colors duration-200" href="#">Tentang Kami</a>
+<a class="font-label-md text-label-md text-on-surface-variant font-medium hover:text-primary-container transition-colors duration-200" href="#">Layanan</a>
+<a class="font-label-md text-label-md text-on-surface-variant font-medium hover:text-primary-container transition-colors duration-200" href="#">Cara Kerja</a>
+</nav>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="bg-[#059669] text-on-primary font-label-md text-label-md px-6 py-3 rounded-lg hover:bg-primary-container transition-colors">
+                    Admin Login
+                </button>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative pt-16 pb-32 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="grid md:grid-cols-2 gap-12 items-center">
+<!-- Left: Content -->
+<div class="space-y-stack-lg">
+<h1 class="font-display-lg text-display-lg text-on-surface">
+                        Inovasi Hari Ini, <span class="text-[#059669]">Lingkungan Lestari Esok</span>
+</h1>
+<p class="font-body-lg text-body-lg text-body-text max-w-xl">
+                        Platform monitoring transparan untuk pengelolaan bank sampah desa. Membangun kesadaran warga dan mengukur dampak nyata bagi lingkungan kita.
+                    </p>
+<div class="flex flex-wrap gap-4 pt-4">
+<button class="bg-[#059669] text-on-primary font-label-md text-label-md px-8 py-4 rounded-xl hover:bg-primary-container transition-colors shadow-sm">
+                            Lihat Dashboard
+                        </button>
+<button class="border-2 border-surface-variant text-primary font-label-md text-label-md px-8 py-4 rounded-xl hover:border-primary hover:text-primary transition-colors">
+                            Baca Panduan
+                        </button>
+</div>
+</div>
+<!-- Right: Image -->
+<div class="relative h-[500px] w-full rounded-3xl overflow-hidden shadow-sm">
+<img alt="Green village landscape" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMUS8HsWsq5vOcvARIZEV4e3Ue4PNvUqleK5osuW0Sj1ArgdR_aMAglluP3BQdf07Z2ruai1NrHjp0AtvywOGzaNL0rjs4KO5UXJYDEdSMZXtlhwmdEB5_VUaXx4vQsyNm6eZ_-GRMIoMNiZLrnuayNsdYjy3k3DdMkgUIl6HeRsAbE128h7b6y3QjqlN3mCDA4fSGqV0-BT6xvOujyJDMjmn1hjc89m-fgDr6vipCnKDmQKk4oTxsbQ"/>
+</div>
+</div>
+<!-- Floating Stats Bar -->
+<div class="absolute -bottom-16 left-margin-mobile right-margin-mobile md:left-margin-desktop md:right-margin-desktop max-w-[1000px] mx-auto z-10">
+<div class="bg-surface border border-surface-border shadow-md rounded-2xl p-8">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-surface-border">
+<div class="flex flex-col items-center justify-center p-4">
+<span class="material-symbols-outlined text-[#059669] text-4xl mb-2" data-icon="groups">groups</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">500+</h3>
+<p class="font-body-sm text-body-sm text-body-text">Nasabah Aktif</p>
+</div>
+<div class="flex flex-col items-center justify-center p-4">
+<span class="material-symbols-outlined text-[#059669] text-4xl mb-2" data-icon="delete_outline">delete_outline</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">1.200 Kg</h3>
+<p class="font-body-sm text-body-sm text-body-text">Sampah Terkelola</p>
+</div>
+<div class="flex flex-col items-center justify-center p-4">
+<span class="material-symbols-outlined text-[#059669] text-4xl mb-2" data-icon="emoji_events">emoji_events</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">15+</h3>
+<p class="font-body-sm text-body-sm text-body-text">Penghargaan Desa</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Spacer for Floating Bar -->
+<div class="h-32"></div>
+<!-- Value Section -->
+<section class="py-16 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<div class="text-center max-w-2xl mx-auto mb-16">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-4">Membangun Kesadaran, Menciptakan Dampak.</h2>
+<p class="font-body-md text-body-md text-body-text">Bersama mewujudkan desa yang bersih, sehat, dan berdaya saing melalui pengelolaan sampah yang terstruktur dan terpadu.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Value Card 1 -->
+<div class="bg-surface border border-surface-border shadow-sm rounded-2xl p-8 hover:-translate-y-1 transition-transform duration-300">
+<div class="w-16 h-16 rounded-full bg-[#ecfdf5] flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[#059669]" data-icon="eco">eco</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Lingkungan Bersih</h3>
+<p class="font-body-sm text-body-sm text-body-text">Mengurangi penumpukan sampah liar dan menjaga estetika serta kesehatan lingkungan desa kita tercinta.</p>
+</div>
+<!-- Value Card 2 -->
+<div class="bg-surface border border-surface-border shadow-sm rounded-2xl p-8 hover:-translate-y-1 transition-transform duration-300">
+<div class="w-16 h-16 rounded-full bg-[#ecfdf5] flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[#059669]" data-icon="payments">payments</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Nilai Ekonomi</h3>
+<p class="font-body-sm text-body-sm text-body-text">Mengubah sampah bernilai guna menjadi sumber pendapatan tambahan bagi warga dan kas pembangunan desa.</p>
+</div>
+<!-- Value Card 3 -->
+<div class="bg-surface border border-surface-border shadow-sm rounded-2xl p-8 hover:-translate-y-1 transition-transform duration-300">
+<div class="w-16 h-16 rounded-full bg-[#ecfdf5] flex items-center justify-center mb-6">
+<span class="material-symbols-outlined text-[#059669]" data-icon="monitoring">monitoring</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Data Transparan</h3>
+<p class="font-body-sm text-body-sm text-body-text">Pencatatan real-time yang dapat diakses oleh semua warga, memastikan pengelolaan berjalan jujur dan akuntabel.</p>
+</div>
+</div>
+</section>
+<!-- How It Works Section -->
+<section class="py-16 px-margin-mobile md:px-margin-desktop bg-surface-container-low dark:bg-surface-dim">
+<div class="max-w-container-max mx-auto">
+<h2 class="font-headline-md text-headline-md text-on-surface mb-12 text-center">4 Langkah Cara Kerja</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Step 1 -->
+<div class="bg-surface border border-surface-border shadow-sm rounded-2xl p-6 relative">
+<div class="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-[#059669] text-on-primary flex items-center justify-center font-bold text-lg border-4 border-surface shadow-sm z-10">1</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2 mt-2">Pilah Sampah</h4>
+<p class="font-body-sm text-body-sm text-body-text">Warga memilah sampah organik dan anorganik dari rumah masing-masing.</p>
+</div>
+<!-- Step 2 -->
+<div class="bg-surface border border-surface-border shadow-sm rounded-2xl p-6 relative">
+<div class="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-[#059669] text-on-primary flex items-center justify-center font-bold text-lg border-4 border-surface shadow-sm z-10">2</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2 mt-2">Setor ke Bank</h4>
+<p class="font-body-sm text-body-sm text-body-text">Bawa sampah terpilah ke fasilitas Bank Sampah Desa Piji pada jadwal yang ditentukan.</p>
+</div>
+<!-- Step 3 -->
+<div class="bg-surface border border-surface-border shadow-sm rounded-2xl p-6 relative">
+<div class="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-[#059669] text-on-primary flex items-center justify-center font-bold text-lg border-4 border-surface shadow-sm z-10">3</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2 mt-2">Penimbangan</h4>
+<p class="font-body-sm text-body-sm text-body-text">Petugas menimbang, mencatat jenis, dan memasukkan data ke dalam sistem.</p>
+</div>
+<!-- Step 4 -->
+<div class="bg-surface border border-surface-border shadow-sm rounded-2xl p-6 relative">
+<div class="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-[#059669] text-on-primary flex items-center justify-center font-bold text-lg border-4 border-surface shadow-sm z-10">4</div>
+<h4 class="font-label-md text-label-md text-on-surface mb-2 mt-2">Saldo Bertambah</h4>
+<p class="font-body-sm text-body-sm text-body-text">Nilai rupiah dari sampah otomatis ditambahkan ke saldo akun warga.</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer (Shared Component) -->
+<footer class="bg-surface-container-low dark:bg-surface-dim w-full py-12 border-t border-surface-border">
+<div class="flex flex-col md:flex-row justify-between items-center gap-gutter px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+<!-- Brand / Copyright -->
+<div class="text-center md:text-left">
+<span class="font-headline-sm text-headline-sm font-bold text-on-surface dark:text-on-surface-variant block mb-2">
+                    Bank Sampah Desa Piji
+                </span>
+<p class="font-body-sm text-body-sm text-body-text">
+                    © 2024 Bank Sampah Desa Piji | KKNT-47 UNDIP. Empowering Sustainability.
+                </p>
+</div>
+<!-- Links -->
+<div class="flex flex-wrap gap-6 justify-center">
+<a class="font-label-sm text-label-sm text-body-text hover:text-primary transition-colors" href="#">Kebijakan Privasi</a>
+<a class="font-label-sm text-label-sm text-body-text hover:text-primary transition-colors" href="#">Syarat &amp; Ketentuan</a>
+<a class="font-label-sm text-label-sm text-body-text hover:text-primary transition-colors" href="#">Hubungi Kami</a>
+</div>
+</div>
+</footer>
+</body></html>
