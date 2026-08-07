@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Award, Leaf, LineChart, Trash2, Users, Wallet, MapPin, Phone, Mail } from "lucide-react";
+import { ArrowRight, Award, Leaf, LineChart, Trash2, Users, Wallet, MapPin, Phone, Mail, Play, Globe } from "lucide-react";
 import { ProfilOrganisasiSection } from "@/features/profil-program/components/profil-organisasi-section";
 import { GuideSopSection } from "@/features/guide-sop/components/guide-sop-section";
 import { BeritaListSection } from "@/features/berita/components/berita-list-section";
@@ -10,18 +10,19 @@ import { getSiteContentMap } from "@/lib/site-content";
 // ============================================================
 // HomePage — server component. Seluruh konten statis (hero, stats,
 // value props, cara kerja, kontak) dibaca dari tabel `site_content`
-// (diedit admin via Kelola Konten). Hanya angka statistik nasabah/
-// sampah yang bersumber dari indikator & capaian (fitur monev) —
-// ditambahkan pada langkah penyempurnaan berikutnya.
+// (diedit admin via Kelola Konten).
 // ============================================================
 
 export async function HomePage() {
   const c = await getSiteContentMap();
 
+  const heroImgSrc = c.hero_image && c.hero_image.trim() !== "" ? c.hero_image : "/hero/hero.PNG";
+
   const stats = [
-    { icon: Users, value: c.stat1_value, label: c.stat1_label },
-    { icon: Trash2, value: c.stat2_value, label: c.stat2_label },
-    { icon: Award, value: c.stat3_value, label: c.stat3_label },
+    { icon: Users, value: c.stat1_value || "500+", label: c.stat1_label || "Nasabah Aktif", color: "text-emerald-600 bg-emerald-50" },
+    { icon: Trash2, value: c.stat2_value || "1.200 Kg", label: c.stat2_label || "Sampah Terkelola", color: "text-blue-600 bg-blue-50" },
+    { icon: Award, value: c.stat3_value || "15+", label: c.stat3_label || "Penghargaan Desa", color: "text-amber-600 bg-amber-50" },
+    { icon: Globe, value: c.stat4_value || "100%", label: c.stat4_label || "Transparan & Akuntabel", color: "text-teal-600 bg-teal-50" },
   ];
 
   const values = [
@@ -38,80 +39,105 @@ export async function HomePage() {
   ];
 
   // Bagi headline: bagian sebelum koma pertama ditulis besar + emerald.
-  const headline = c.hero_headline;
-  const headlineFirst = headline.split(",")[0]?.trim() ?? "";
-  const headlineRest = headline.slice(headlineFirst.length).replace(/^,/, "").trim();
+  const headline = c.hero_headline || "Pilah Sampah, Jaga Bumi Desa";
+  const headlineFirst = headline.split(",")[0]?.trim() ?? headline;
+  const headlineRest = headline.includes(",") ? headline.slice(headlineFirst.length).replace(/^,/, "").trim() : "";
 
   return (
     <main>
-      {/* ===== Hero ===== */}
-      <section className="relative mx-auto max-w-[1280px] px-4 pt-16 pb-32 md:px-10">
-        <div className="grid items-center gap-12 md:grid-cols-2">
-          <div className="space-y-8">
-            <h1 className="font-heading text-[32px] leading-[1.25] font-extrabold text-foreground md:text-[48px] md:leading-[1.2] md:tracking-[-0.02em]">
-              {headlineFirst}
-              {headlineRest && (
-                <>
-                  <br />
-                  <span className="text-primary">{headlineRest}</span>
-                </>
-              )}
-            </h1>
-            <p className="max-w-xl text-lg leading-[1.6] text-muted-foreground">
-              {c.hero_subheadline}
-            </p>
-            <div className="flex flex-wrap gap-4 pt-4">
-              <Link
-                href={c.hero_cta_href || "/monev"}
-                className="rounded-xl bg-primary px-8 py-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
-              >
-                {c.hero_cta_label || "Lihat Dashboard"}
-              </Link>
-              <Link
-                href="/panduan"
-                className="rounded-xl border-2 border-input px-8 py-4 text-sm font-semibold text-primary transition-colors hover:border-primary"
-              >
-                Baca Panduan
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative h-[300px] w-full overflow-hidden rounded-3xl shadow-sm md:h-[500px]">
-            {c.hero_image ? (
+      {/* ===== Hero Section ===== */}
+      <section className="relative overflow-hidden bg-slate-50 pt-6 pb-28 md:pt-12 md:pb-36">
+        {/* Hero Banner Container */}
+        <div className="relative mx-auto max-w-[1280px] px-4 md:px-10">
+          <div className="relative min-h-[480px] md:min-h-[540px] w-full overflow-hidden rounded-3xl border border-slate-200/80 shadow-md">
+            
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0">
               <Image
-                src={c.hero_image}
-                alt="Foto utama Bank Sampah Desa Piji"
+                src={heroImgSrc}
+                alt="Hero Bank Sampah Desa Piji"
                 fill
-                className="object-cover"
+                className="object-cover object-right md:object-center"
                 priority
                 unoptimized
               />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent to-surface-container-low">
-                <Leaf className="h-20 w-20 text-primary/30" strokeWidth={1.25} />
+              {/* Gradient Overlay to ensure text readability on the left */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/90 via-55% to-white/10 md:via-60% md:to-transparent" />
+            </div>
+
+            {/* Content Layer */}
+            <div className="relative z-10 flex min-h-[480px] md:min-h-[540px] items-center p-6 md:p-14">
+              <div className="max-w-2xl space-y-6">
+                
+                {/* Main Headline */}
+                <h1 className="font-heading text-3xl font-extrabold leading-[1.15] text-slate-900 sm:text-4xl md:text-[52px] tracking-tight">
+                  {headlineFirst}
+                  {headlineRest ? (
+                    <>
+                      <br />
+                      <span className="text-emerald-600">{headlineRest}</span>
+                    </>
+                  ) : (
+                    <span className="block text-emerald-600">Jaga Bumi, Sejahterakan Desa</span>
+                  )}
+                </h1>
+
+                {/* Subheadline Description */}
+                <p className="max-w-xl text-base md:text-lg leading-relaxed text-slate-600">
+                  {c.hero_subheadline || "We deliver intelligent solutions that drive growth, empower communities, and create lasting environmental impact."}
+                </p>
+
+                {/* CTA Buttons */}
+                <div className="flex flex-wrap items-center gap-4 pt-2">
+                  <Link
+                    href={c.hero_cta_href || "/monev"}
+                    className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-7 py-3.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:bg-emerald-700 hover:shadow-lg hover:-translate-y-0.5"
+                  >
+                    {c.hero_cta_label || "Lihat Dashboard"}
+                  </Link>
+                  
+                  <Link
+                    href="/panduan"
+                    className="inline-flex items-center gap-2.5 rounded-xl border border-slate-300 bg-white/90 backdrop-blur-sm px-6 py-3.5 text-sm font-semibold text-slate-700 shadow-sm transition-all duration-200 hover:border-emerald-600 hover:text-emerald-600 hover:shadow-md hover:-translate-y-0.5"
+                  >
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                      <Play className="h-3 w-3 fill-emerald-600 ml-0.5" />
+                    </div>
+                    <span>Baca Panduan</span>
+                  </Link>
+                </div>
+
               </div>
-            )}
+            </div>
           </div>
         </div>
 
-        {/* Floating stats bar */}
-        <div className="absolute inset-x-4 -bottom-16 z-10 mx-auto max-w-[1000px] md:inset-x-10">
-          <div className="rounded-2xl border border-border bg-card p-8 shadow-md">
-            <div className="grid grid-cols-1 gap-8 divide-y divide-border text-center md:grid-cols-3 md:divide-x md:divide-y-0">
-              {stats.map((s) => (
-                <div key={s.label} className="flex flex-col items-center justify-center p-4">
-                  <s.icon className="mb-2 h-9 w-9 text-primary" strokeWidth={1.75} />
-                  <h3 className="font-heading text-2xl font-bold text-foreground">{s.value}</h3>
-                  <p className="text-sm text-muted-foreground">{s.label}</p>
+        {/* Floating Stats Bar anchored at bottom of Hero */}
+        <div className="relative z-20 mx-auto max-w-[1150px] px-4 md:px-10 -mt-16 sm:-mt-20">
+          <div className="rounded-2xl md:rounded-3xl border border-slate-100 bg-white p-6 shadow-xl shadow-slate-900/5">
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 divide-y sm:divide-y-0 lg:grid-cols-4 lg:divide-x divide-slate-100">
+              {stats.map((s, idx) => (
+                <div
+                  key={s.label}
+                  className={`flex items-center gap-4 ${idx > 0 ? "pt-4 sm:pt-0" : ""} ${idx > 0 ? "lg:pl-6" : ""}`}
+                >
+                  <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${s.color}`}>
+                    <s.icon className="h-6 w-6" strokeWidth={2} />
+                  </div>
+                  <div>
+                    <h3 className="font-heading text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
+                      {s.value}
+                    </h3>
+                    <p className="text-xs md:text-sm font-medium text-slate-500">
+                      {s.label}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </section>
-
-      {/* Spacer for floating bar */}
-      <div className="h-32" />
 
       {/* ===== Value props ===== */}
       <section className="mx-auto max-w-[1280px] px-4 py-16 md:px-10">
