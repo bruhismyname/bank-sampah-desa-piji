@@ -1,10 +1,47 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, ExternalLink } from "lucide-react";
-import { dummyBerita } from "./berita-list-section";
+import { eq } from "drizzle-orm";
+import { ArrowLeft } from "lucide-react";
+import { db } from "@/db";
+import { berita } from "@/db/schema";
+import type { Berita } from "./berita-list-section";
 
-export function DetailBerita({ slug }: { slug: string }) {
-  const article = dummyBerita.find((b) => b.slug === slug);
+/** Ambil satu artikel terbit berdasarkan slug (untuk halaman detail). */
+export async function getBeritaBySlug(slug: string): Promise<Berita | null> {
+  const row = await db
+    .select({
+      judul: berita.judul,
+      slug: berita.slug,
+      konten: berita.konten,
+      coverUrl: berita.coverUrl,
+      status: berita.status,
+      tanggalPublish: berita.tanggalPublish,
+    })
+    .from(berita)
+    .where(eq(berita.slug, slug))
+    .limit(1);
+
+  if (!row[0] || row[0].status !== "published") return null;
+  const r = row[0];
+
+  return {
+    slug: r.slug,
+    title: r.judul,
+    excerpt: "",
+    date: r.tanggalPublish
+      ? new Date(r.tanggalPublish).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      : "",
+    imageUrl: r.coverUrl,
+    content: r.konten,
+  };
+}
+
+export async function DetailBerita({ slug }: { slug: string }) {
+  const article = await getBeritaBySlug(slug);
 
   // Artikel tidak ditemukan — tampilkan pesan ramah alih-alih halaman kosong.
   if (!article) {
@@ -30,8 +67,6 @@ export function DetailBerita({ slug }: { slug: string }) {
       </main>
     );
   }
-
-  const paragraphs = (article.content ?? "").split(/\n{2,}/).filter(Boolean);
 
   return (
     <main className="min-h-screen bg-white">
@@ -69,27 +104,12 @@ export function DetailBerita({ slug }: { slug: string }) {
           />
         </div>
 
-        {/* Body Content */}
-        <div className="mt-10 max-w-none text-lg leading-loose text-slate-700 space-y-6">
-          {paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))}
-        </div>
-
-        {/* Tombol sumber asli (jika ada) */}
-        {article.externalUrl && (
-          <div className="mt-10 pt-8 border-t border-slate-100 text-center">
-            <a
-              href={article.externalUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition-colors hover:bg-emerald-700"
-            >
-              Baca selengkapnya di sumber asli
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          </div>
-        )}
+        {/* Body Content — HTML dari WYSIWYG, sudah di-sanitize DOMPurify
+            saat disimpan. `prose` memberi gaya tipografi rapi. */}
+        <div
+          className="prose prose-slate prose-lg max-w-none mt-10 leading-loose text-slate-700"
+          dangerouslySetInnerHTML={{ __html: article.content ?? "" }}
+        />
       </div>
     </main>
   );

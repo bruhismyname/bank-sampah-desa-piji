@@ -1,6 +1,6 @@
 import { BeritaListSection } from "./berita-list-section";
 
-export function DaftarBerita() {
+export async function DaftarBerita() {
   return (
     <main className="min-h-screen bg-slate-50">
       {/* Page Header (Eco-Corporate Synthesis style) */}

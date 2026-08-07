@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Info, LogIn, LineChart, AlertCircle, FileSpreadsheet, ChevronRight } from "lucide-react";
+import { Info, LogIn, KeyRound, LineChart, AlertCircle, FileSpreadsheet, ChevronRight } from "lucide-react";
 
 interface Step {
   title: string;
@@ -39,6 +39,31 @@ const topics: Topic[] = [
       },
     ],
     tips: "Gunakan fitur simpan sandi pada browser Anda jika Anda mengakses admin panel menggunakan perangkat pribadi untuk mempermudah login berikutnya.",
+  },
+  {
+    id: "reset-password",
+    label: "Reset Password",
+    title: "Cara Reset Password Admin",
+    icon: KeyRound,
+    description: "Lupa password? Reset lewat Kode Pemulihan — tanpa perlu memanggil developer. Kode pemulihan dipegang Kepala Desa / Sekretaris Desa.",
+    steps: [
+      {
+        title: "Buka Halaman Reset Password",
+        description: "Dari halaman login, klik tautan **Lupa Password?** atau akses langsung alamat https://…/reset-password pada peramban.",
+        screenshotText: "Screenshot: Form Input Kode Pemulihan",
+      },
+      {
+        title: "Masukkan Kode Pemulihan",
+        description: "Ketik kode pemulihan 12 karakter yang disimpan Kepala/Sekretaris Desa, lalu masukkan **password baru** Anda. Klik tombol reset.",
+        screenshotText: "Screenshot: Kode Pemulihan Terisi & Password Baru",
+      },
+      {
+        title: "Catat Kode Pemulihan Baru",
+        description: "Setelah berhasil, sistem **otomatis membuat kode pemulihan baru** dan menampilkannya sekali di layar. Catat dan simpan di tempat aman — kode lama sudah tidak berlaku.",
+        screenshotText: "Screenshot: Kode Pemulihan Baru Ditampilkan Sekali",
+      },
+    ],
+    tips: "Kode pemulihan hanya tampil SEKALI saat dibuat. Jangan simpan di HP yang sama dengan admin — pegang oleh orang berbeda (Kepala/Sekretaris Desa) sebagai cadangan.",
   },
   {
     id: "capaian",
@@ -235,6 +260,12 @@ function IconSVG({ topicId }: { topicId: string }) {
       return (
         <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+        </svg>
+      );
+    case "reset-password":
+      return (
+        <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
         </svg>
       );
     case "capaian":

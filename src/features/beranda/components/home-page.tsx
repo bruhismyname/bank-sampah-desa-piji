@@ -5,53 +5,43 @@ import { ProfilOrganisasiSection } from "@/features/profil-program/components/pr
 import { GuideSopSection } from "@/features/guide-sop/components/guide-sop-section";
 import { BeritaListSection } from "@/features/berita/components/berita-list-section";
 import { LokasiBankSampah } from "@/features/kontak/components/lokasi-bank-sampah";
+import { getSiteContentMap } from "@/lib/site-content";
 
-// ponytail: copy & stats di-hardcode dulu sesuai mockup; nanti datang dari
-// tabel site_content + indikator berflag tampilkanDiBeranda (fitur Kelola Konten).
-const stats = [
-  { icon: Users, value: "500+", label: "Nasabah Aktif" },
-  { icon: Trash2, value: "1.200 Kg", label: "Sampah Terkelola" },
-  { icon: Award, value: "15+", label: "Penghargaan Desa" },
-];
+// ============================================================
+// HomePage — server component. Seluruh konten statis (hero, stats,
+// value props, cara kerja, kontak) dibaca dari tabel `site_content`
+// (diedit admin via Kelola Konten). Hanya angka statistik nasabah/
+// sampah yang bersumber dari indikator & capaian (fitur monev) —
+// ditambahkan pada langkah penyempurnaan berikutnya.
+// ============================================================
 
-const values = [
-  {
-    icon: Leaf,
-    title: "Lingkungan Bersih",
-    body: "Mengurangi penumpukan sampah liar dan menjaga estetika serta kesehatan lingkungan desa kita tercinta.",
-  },
-  {
-    icon: Wallet,
-    title: "Nilai Ekonomi",
-    body: "Mengubah sampah bernilai guna menjadi sumber pendapatan tambahan bagi warga dan kas pembangunan desa.",
-  },
-  {
-    icon: LineChart,
-    title: "Data Transparan",
-    body: "Pencatatan real-time yang dapat diakses oleh semua warga, memastikan pengelolaan berjalan jujur dan akuntabel.",
-  },
-];
+export async function HomePage() {
+  const c = await getSiteContentMap();
 
-const steps = [
-  {
-    title: "Pilah Sampah",
-    body: "Warga memilah sampah organik dan anorganik dari rumah masing-masing.",
-  },
-  {
-    title: "Setor ke Bank",
-    body: "Bawa sampah terpilah ke fasilitas Bank Sampah Desa Piji pada jadwal yang ditentukan.",
-  },
-  {
-    title: "Penimbangan",
-    body: "Petugas menimbang, mencatat jenis, dan memasukkan data ke dalam sistem.",
-  },
-  {
-    title: "Saldo Bertambah",
-    body: "Nilai rupiah dari sampah otomatis ditambahkan ke saldo akun warga.",
-  },
-];
+  const stats = [
+    { icon: Users, value: c.stat1_value, label: c.stat1_label },
+    { icon: Trash2, value: c.stat2_value, label: c.stat2_label },
+    { icon: Award, value: c.stat3_value, label: c.stat3_label },
+  ];
 
-export function HomePage() {
+  const values = [
+    { icon: Leaf, title: c.value_prop1_title, body: c.value_prop1_body },
+    { icon: Wallet, title: c.value_prop2_title, body: c.value_prop2_body },
+    { icon: LineChart, title: c.value_prop3_title, body: c.value_prop3_body },
+  ];
+
+  const steps = [
+    { title: c.step1_title, body: c.step1_body },
+    { title: c.step2_title, body: c.step2_body },
+    { title: c.step3_title, body: c.step3_body },
+    { title: c.step4_title, body: c.step4_body },
+  ];
+
+  // Bagi headline: bagian sebelum koma pertama ditulis besar + emerald.
+  const headline = c.hero_headline;
+  const headlineFirst = headline.split(",")[0]?.trim() ?? "";
+  const headlineRest = headline.slice(headlineFirst.length).replace(/^,/, "").trim();
+
   return (
     <main>
       {/* ===== Hero ===== */}
@@ -59,21 +49,23 @@ export function HomePage() {
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div className="space-y-8">
             <h1 className="font-heading text-[32px] leading-[1.25] font-extrabold text-foreground md:text-[48px] md:leading-[1.2] md:tracking-[-0.02em]">
-              Pilah Sampah, Jaga Bumi,
-              <br />
-              <span className="text-primary">Sejahterakan Desa</span>
+              {headlineFirst}
+              {headlineRest && (
+                <>
+                  <br />
+                  <span className="text-primary">{headlineRest}</span>
+                </>
+              )}
             </h1>
             <p className="max-w-xl text-lg leading-[1.6] text-muted-foreground">
-              Platform monitoring transparan untuk pengelolaan bank sampah
-              desa. Membangun kesadaran warga dan mengukur dampak nyata bagi
-              lingkungan kita.
+              {c.hero_subheadline}
             </p>
             <div className="flex flex-wrap gap-4 pt-4">
               <Link
-                href="/monev"
+                href={c.hero_cta_href || "/monev"}
                 className="rounded-xl bg-primary px-8 py-4 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
               >
-                Lihat Dashboard
+                {c.hero_cta_label || "Lihat Dashboard"}
               </Link>
               <Link
                 href="/panduan"
@@ -85,14 +77,20 @@ export function HomePage() {
           </div>
 
           <div className="relative h-[300px] w-full overflow-hidden rounded-3xl shadow-sm md:h-[500px]">
-            <Image
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMUS8HsWsq5vOcvARIZEV4e3Ue4PNvUqleK5osuW0Sj1ArgdR_aMAglluP3BQdf07Z2ruai1NrHjp0AtvywOGzaNL0rjs4KO5UXJYDEdSMZXtlhwmdEB5_VUaXx4vQsyNm6eZ_-GRMIoMNiZLrnuayNsdYjy3k3DdMkgUIl6HeRsAbE128h7b6y3QjqlN3mCDA4fSGqV0-BT6xvOujyJDMjmn1hjc89m-fgDr6vipCnKDmQKk4oTxsbQ"
-              alt="Pemandangan desa yang hijau dan asri"
-              fill
-              className="object-cover"
-              priority
-              unoptimized
-            />
+            {c.hero_image ? (
+              <Image
+                src={c.hero_image}
+                alt="Foto utama Bank Sampah Desa Piji"
+                fill
+                className="object-cover"
+                priority
+                unoptimized
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-accent to-surface-container-low">
+                <Leaf className="h-20 w-20 text-primary/30" strokeWidth={1.25} />
+              </div>
+            )}
           </div>
         </div>
 
@@ -119,12 +117,9 @@ export function HomePage() {
       <section className="mx-auto max-w-[1280px] px-4 py-16 md:px-10">
         <div className="mx-auto mb-16 max-w-2xl text-center">
           <h2 className="mb-4 font-heading text-3xl font-bold text-foreground">
-            Membangun Kesadaran, Menciptakan Dampak.
+            {c.value_props_title}
           </h2>
-          <p className="text-muted-foreground">
-            Bersama mewujudkan desa yang bersih, sehat, dan berdaya saing
-            melalui pengelolaan sampah yang terstruktur dan terpadu.
-          </p>
+          <p className="text-muted-foreground">{c.value_props_subtitle}</p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -147,7 +142,7 @@ export function HomePage() {
       <section className="bg-muted px-4 py-16 md:px-10">
         <div className="mx-auto max-w-[1280px]">
           <h2 className="mb-12 text-center font-heading text-3xl font-bold text-foreground">
-            4 Langkah Cara Kerja
+            {c.steps_title}
           </h2>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((step, i) => (
@@ -202,7 +197,7 @@ export function HomePage() {
           {/* Split Card */}
           <div className="rounded-2xl border border-slate-100 bg-white p-8 shadow-sm md:p-12">
             <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-              
+
               {/* Left Column (Contact Info) */}
               <div className="flex flex-col justify-between space-y-8">
                 <div>
@@ -210,14 +205,14 @@ export function HomePage() {
                     Hubungi Kami
                   </h2>
                   <p className="mt-4 text-slate-500 leading-relaxed text-sm">
-                    Punya pertanyaan seputar keanggotaan nasabah, tata cara pemilahan sampah, 
+                    Punya pertanyaan seputar keanggotaan nasabah, tata cara pemilahan sampah,
                     atau ingin berkolaborasi dengan Bank Sampah Desa Piji? Tim kami siap melayani Anda.
                   </p>
                 </div>
 
                 {/* Info Rows */}
                 <div className="space-y-6">
-                  
+
                   {/* Alamat */}
                   <div className="flex items-start gap-4">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
@@ -228,8 +223,7 @@ export function HomePage() {
                         Alamat Kantor
                       </span>
                       <p className="mt-1 text-sm font-medium text-slate-700 leading-relaxed">
-                        Kantor Kepala Desa Piji, RT 02 / RW 03, Kecamatan Dawe, 
-                        Kabupaten Kudus, Jawa Tengah, 59353
+                        {c.kontak_alamat}
                       </p>
                     </div>
                   </div>
@@ -243,13 +237,13 @@ export function HomePage() {
                       <span className="block text-xs font-bold uppercase tracking-wider text-slate-400">
                         Nomor WhatsApp
                       </span>
-                      <a 
-                        href="https://wa.me/6281234567890" 
-                        target="_blank" 
+                      <a
+                        href={`https://wa.me/${c.kontak_whatsapp}`}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="mt-1 block text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors"
                       >
-                        +62 812-3456-7890
+                        {c.kontak_whatsapp}
                       </a>
                     </div>
                   </div>
@@ -263,11 +257,11 @@ export function HomePage() {
                       <span className="block text-xs font-bold uppercase tracking-wider text-slate-400">
                         Email Resmi
                       </span>
-                      <a 
-                        href="mailto:banksampah@desapiji.id" 
+                      <a
+                        href={`mailto:${c.kontak_email}`}
                         className="mt-1 block text-sm font-semibold text-slate-700 hover:text-emerald-600 transition-colors"
                       >
-                        banksampah@desapiji.id
+                        {c.kontak_email}
                       </a>
                     </div>
                   </div>
@@ -280,44 +274,49 @@ export function HomePage() {
                     Media Sosial
                   </span>
                   <div className="flex items-center gap-3">
-                    <a
-                      href="https://instagram.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
-                      aria-label="Instagram Bank Sampah"
-                    >
-                      <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                      </svg>
-                    </a>
-                    <a
-                      href="https://facebook.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
-                      aria-label="Facebook Bank Sampah"
-                    >
-                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M9 8H7v3h2v9h4v-9h3.625L17 8h-4V7a1 1 0 0 1 1-1h3V2h-3c-3.313 0-6 2.687-6 6z"/>
-                      </svg>
-                    </a>
-                    <a
-                      href="https://youtube.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
-                      aria-label="YouTube Bank Sampah"
-                    >
-                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.108C19.53 3.5 12 3.5 12 3.5s-7.53 0-9.388.555A3.002 3.002 0 0 0 .502 6.163C0 8.07 0 12 0 12s0 3.93.502 5.837a3.003 3.003 0 0 0 2.11 2.108C4.47 20.5 12 20.5 12 20.5s7.53 0 9.388-.555a3.002 3.002 0 0 0 2.11-2.108C24 15.93 24 12 24 12s0-3.93-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                      </svg>
-                    </a>
+                    {c.kontak_instagram && (
+                      <a
+                        href={c.kontak_instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
+                        aria-label="Instagram Bank Sampah"
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
+                          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                          <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                          <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                      </a>
+                    )}
+                    {c.kontak_facebook && (
+                      <a
+                        href={c.kontak_facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
+                        aria-label="Facebook Bank Sampah"
+                      >
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M9 8H7v3h2v9h4v-9h3.625L17 8h-4V7a1 1 0 0 1 1-1h3V2h-3c-3.313 0-6 2.687-6 6z"/>
+                        </svg>
+                      </a>
+                    )}
+                    {c.kontak_youtube && (
+                      <a
+                        href={c.kontak_youtube}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-600 transition-all duration-200"
+                        aria-label="YouTube Bank Sampah"
+                      >
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.108C19.53 3.5 12 3.5 12 3.5s-7.53 0-9.388.555A3.002 3.002 0 0 0 .502 6.163C0 8.07 0 12 0 12s0 3.93.502 5.837a3.003 3.003 0 0 0 2.11 2.108C4.47 20.5 12 20.5 12 20.5s7.53 0 9.388-.555a3.002 3.002 0 0 0 2.11-2.108C24 15.93 24 24 12 24 12s0-3.93-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                        </svg>
+                      </a>
+                    )}
                   </div>
                 </div>
-
               </div>
 
               {/* Right Column (Lokasi Bank Sampah) */}

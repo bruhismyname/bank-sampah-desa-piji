@@ -1,24 +1,29 @@
 import Link from "next/link";
 import { ArrowUpRight, Check, Recycle } from "lucide-react";
+import { getSiteContent } from "@/lib/site-content";
 
 // ============================================================
-// ponytail: konten profil (keunggulan, teks) masih DUMMY. Nanti
-// di-wire ke tabel `site_content` + upload foto kegiatan (fitur
-// Kelola Konten / Profil Program).
+// ProfilOrganisasiSection — server component. Teks tentang, visi, dan
+// keunggulan diambil dari tabel `site_content` (diedit admin via
+// Kelola Konten), bukan hardcode.
 // ============================================================
 
-const keunggulan = [
-  "Pencatatan digital yang transparan dan bisa diakses semua warga",
-  "Pendampingan warga dalam memilah sampah dari rumah",
-  "Kemitraan dengan bank sampah induk dan pemulung",
-  "Pembinaan ekonomi sirkular untuk menambah pendapatan desa",
-];
-
-export function ProfilOrganisasiSection({
+export async function ProfilOrganisasiSection({
   showPengurusButton = false,
 }: {
   showPengurusButton?: boolean;
 }) {
+  const [tentang, visi, strengthsRaw] = await Promise.all([
+    getSiteContent("profil_about"),
+    getSiteContent("profil_vision"),
+    getSiteContent("profil_strengths"),
+  ]);
+
+  const keunggulan = strengthsRaw
+    .split("\n")
+    .map((s) => s.trim())
+    .filter(Boolean);
+
   return (
     <>
       {/* Page header (gradient tipis) */}
@@ -39,18 +44,18 @@ export function ProfilOrganisasiSection({
             <h2 className="font-heading text-2xl font-bold text-foreground md:text-3xl">
               Tentang Bank Sampah Desa Piji
             </h2>
-            <p className="text-base leading-relaxed text-muted-foreground">
-              Bank Sampah Desa Piji lahir dari keprihatinan warga terhadap
-              menumpuknya sampah yang tidak terkelola. Berawal dari inisiatif
-              sederhana mengumpulkan sampah anorganik di balai desa, kini
-              program ini berkembang menjadi pengelolaan sampah terpadu yang
-              melibatkan ratusan nasabah aktif.
-            </p>
-            <p className="text-base leading-relaxed text-muted-foreground">
-              Visi kami adalah mewujudkan desa yang bersih, sehat, dan berdaya
-              saing — menjadikan sampah sebagai sumber nilai, bukan sekadar
-              beban lingkungan.
-            </p>
+            {tentang && (
+              <p className="text-base leading-relaxed text-muted-foreground">{tentang}</p>
+            )}
+            {visi && (
+              <p className="text-base leading-relaxed text-muted-foreground">{visi}</p>
+            )}
+            {!tentang && !visi && (
+              <p className="text-base leading-relaxed text-muted-foreground">
+                Profil Bank Sampah Desa Piji dapat diisi pengurus melalui menu
+                Kelola Konten di halaman admin.
+              </p>
+            )}
             <ul className="space-y-3 pt-2">
               {keunggulan.map((item) => (
                 <li key={item} className="flex items-start gap-3">

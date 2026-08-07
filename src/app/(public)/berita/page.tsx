@@ -6,6 +6,9 @@ export const metadata: Metadata = {
   description: "Ikuti kabar terbaru, aktivitas sosialisasi, dan dampak positif pengelolaan bank sampah di Desa Piji.",
 };
 
+// Daftar berita selalu segar — artikel baru terbit admin langsung tampil.
+export const dynamic = "force-dynamic";
+
 export default function BeritaPage() {
   return <DaftarBerita />;
 }

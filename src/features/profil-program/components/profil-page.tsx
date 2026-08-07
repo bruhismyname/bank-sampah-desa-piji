@@ -1,16 +1,5 @@
 import { ProfilOrganisasiSection } from "@/features/profil-program/components/profil-organisasi-section";
-
-// ============================================================
-// ponytail: data pengurus masih DUMMY. Nanti di-wire ke tabel
-// `site_content` (struktur pengurus profil) — fitur Kelola Konten.
-// ============================================================
-
-const pengurus = [
-  { nama: "Budi Santoso", jabatan: "Kepala Desa" },
-  { nama: "Siti Rahayu", jabatan: "Sekretaris" },
-  { nama: "Ahmad Fauzi", jabatan: "Bendahara" },
-  { nama: "Dewi Lestari", jabatan: "Ketua Bank Sampah" },
-];
+import { getProfilProgram } from "../actions";
 
 function Avatar({ nama }: { nama: string }) {
   const inisial = nama
@@ -27,7 +16,30 @@ function Avatar({ nama }: { nama: string }) {
   );
 }
 
-export function ProfilPage() {
+/**
+ * Halaman Profil Publik.
+ *
+ * Bagian "Tentang" diambil dari `site_content` (diedit admin via Kelola
+ * Konten). Susunan pengurus diambil dari `profil_program.struktur` — teks
+ * "Nama - Jabatan" per baris, diedit admin via Edit Profil.
+ */
+export async function ProfilPage() {
+  const profil = await getProfilProgram();
+
+  // Parse "Nama - Jabatan" per baris. Baris tanpa pemisah dianggap hanya nama.
+  const pengurus = (profil?.struktur ?? "")
+    .split("\n")
+    .map((baris) => baris.trim())
+    .filter(Boolean)
+    .map((baris) => {
+      const idx = baris.indexOf("-");
+      if (idx === -1) return { nama: baris, jabatan: "Pengurus" };
+      return {
+        nama: baris.slice(0, idx).trim(),
+        jabatan: baris.slice(idx + 1).trim(),
+      };
+    });
+
   return (
     <main className="bg-background">
       <ProfilOrganisasiSection />
@@ -38,20 +50,28 @@ export function ProfilPage() {
           <h2 className="mb-10 text-center font-heading text-2xl font-bold text-foreground md:text-3xl">
             Susunan Pengurus Utama
           </h2>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {pengurus.map((p) => (
-              <div
-                key={p.nama}
-                className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-transform duration-300 hover:-translate-y-1"
-              >
-                <Avatar nama={p.nama} />
-                <h3 className="mt-4 font-heading text-lg font-bold text-foreground">
-                  {p.nama}
-                </h3>
-                <p className="mt-1 text-sm text-muted-foreground">{p.jabatan}</p>
-              </div>
-            ))}
-          </div>
+
+          {pengurus.length === 0 ? (
+            <p className="text-center text-sm text-muted-foreground">
+              Susunan pengurus akan ditampilkan setelah diisi melalui menu Edit
+              Profil di halaman admin.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {pengurus.map((p) => (
+                <div
+                  key={p.nama}
+                  className="flex flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm transition-transform duration-300 hover:-translate-y-1"
+                >
+                  <Avatar nama={p.nama} />
+                  <h3 className="mt-4 font-heading text-lg font-bold text-foreground">
+                    {p.nama}
+                  </h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{p.jabatan}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </main>

@@ -1,5 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { desc, eq } from "drizzle-orm";
+import { db } from "@/db";
+import { berita } from "@/db/schema";
 
 export interface Berita {
   slug: string;
@@ -7,38 +10,60 @@ export interface Berita {
   excerpt: string;
   date: string;
   imageUrl: string;
-  /** Jika ada, tombol "Baca selengkapnya" mengarah ke URL eksternal (mis. sumber berita asli). */
+  /** Jika ada, tombol "Baca selengkapnya" mengarah ke URL eksternal. */
   externalUrl?: string;
-  /** Konten penuh artikel, dipisah tiap paragraf dengan baris kosong. */
+  /** Konten penuh artikel (HTML hasil WYSIWYG, sudah di-sanitize). */
   content?: string;
 }
 
-// ponytail: sementara masih hardcoded (belum terhubung DB). Saat fitur Kelola
-// Berita di-wire ke tabel `berita`, data di bawah diganti query DB.
-export const dummyBerita: Berita[] = [
-  {
-    slug: "kkn-t-idbu-47-undip-perkuat-pengelolaan-sampah-desa-piji",
-    title:
-      "KKN-T IDBU 47 UNDIP Perkuat Pengelolaan Sampah Desa Piji melalui Edukasi dan Pembentukan Bank Sampah",
-    excerpt:
-      "Tim KKN Tematik IDBU 47 Universitas Diponegoro menggelar edukasi dan pembentukan Bank Sampah di Desa Piji pada 25 Juli 2026, diikuti 29 warga, sebagai langkah awal membangun budaya pemilahan sampah yang berkelanjutan.",
-    date: "25 Juli 2026",
-    imageUrl: "/berita/foto.jpeg",
-    externalUrl:
-      "https://jatengku.com/kkn-t-idbu-47-undip-perkuat-pengelolaan-sampah-desa-piji-melalui-edukasi-dan-pembentukan-bank-sampah/",
-    content: `Sebagai upaya meningkatkan kesadaran masyarakat terhadap pentingnya pengelolaan sampah yang berkelanjutan, Tim Kuliah Kerja Nyata Tematik (KKNT) IDBU 47 Universitas Diponegoro menyelenggarakan kegiatan bertajuk "Optimalisasi Bank Sampah melalui Edukasi Pemilahan Sampah dalam Mendukung SDGs Desa Piji" pada Sabtu, 25 Juli 2026, bertempat di Aula Balai Desa Piji, Kecamatan Dawe, Kabupaten Kudus. Kegiatan yang diikuti oleh 29 masyarakat Desa Piji ini menjadi langkah awal dalam memperkuat kelembagaan Bank Sampah sekaligus membangun budaya pemilahan sampah di tingkat masyarakat.
-
-Berangkat dari permasalahan pengelolaan sampah yang belum optimal di Desa Piji, Tim KKN-T IDBU 47 Universitas Diponegoro menginisiasi kegiatan edukasi dan pembentukan Bank Sampah sebagai langkah pemberdayaan masyarakat. Meskipun desa memiliki potensi sumber daya alam dan kelompok masyarakat yang aktif, pengelolaan sampah rumah tangga, khususnya sampah anorganik, masih menghadapi berbagai kendala, seperti rendahnya kesadaran masyarakat dalam memilah sampah serta belum optimalnya pemanfaatan bank sampah sebagai sarana pengelolaan dan peningkatan nilai ekonomi sampah. Kondisi tersebut mendorong Tim KKN-T IDBU 47 Universitas Diponegoro untuk menghadirkan program edukasi dan penguatan kelembagaan sebagai solusi yang diharapkan mampu meningkatkan partisipasi masyarakat dalam mewujudkan lingkungan yang lebih bersih dan berkelanjutan.
-
-Melalui kegiatan ini, Tim KKN-T IDBU 47 Universitas Diponegoro berupaya membentuk kepengurusan Bank Sampah Desa Piji, menyerahkan pengelolaan Bank Sampah kepada calon pengurus, serta memberikan edukasi mengenai pentingnya pemilahan sampah dan optimalisasi fungsi Bank Sampah. Program ini diharapkan dapat menumbuhkan perilaku masyarakat yang lebih peduli terhadap lingkungan, meningkatkan nilai ekonomis sampah melalui proses pemilahan, serta mendukung pencapaian Tujuan Pembangunan Berkelanjutan (Sustainable Development Goals/SDGs) poin 11, yakni sustainable cities and communities dan juga poin 12 terkait responsible consumption and production di Desa Piji melalui pengelolaan sampah yang lebih efektif dan berkelanjutan.`,
-  },
-];
-
 /**
- * Kartu berita SELALU menuju halaman detail internal `/berita/[slug]`.
- * Redirect ke sumber eksternal (jika ada) dilakukan dari halaman detail
- * melalui tombol "Baca selengkapnya", bukan langsung dari kartu.
+ * Query artikel terbit dari DB. Hanya status `published` yang tampil publik.
+ * Urut: tanggal terbit terbaru dulu.
  */
+export async function getBeritaPublished(): Promise<Berita[]> {
+  const rows = await db
+    .select({
+      judul: berita.judul,
+      slug: berita.slug,
+      konten: berita.konten,
+      coverUrl: berita.coverUrl,
+      tanggalPublish: berita.tanggalPublish,
+    })
+    .from(berita)
+    .where(eq(berita.status, "published"))
+    .orderBy(desc(berita.tanggalPublish), desc(berita.createdAt));
+
+  return rows.map((row) => {
+    // Ringkasan: potong paragraf pertama HTML → teks polos.
+    const teks = row.konten
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    return {
+      slug: row.slug,
+      title: row.judul,
+      excerpt: teks.slice(0, 160) + (teks.length > 160 ? "…" : ""),
+      date: formatTanggal(row.tanggalPublish),
+      imageUrl: row.coverUrl,
+      content: row.konten,
+    };
+  });
+}
+
+/** Format tanggal ISO → "6 Agustus 2026" (id-ID). */
+function formatTanggal(d: Date | string | null): string {
+  if (!d) return "";
+  const date = new Date(d);
+  if (isNaN(date.getTime())) return "";
+  return date.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+/** Kartu berita SELALU menuju halaman detail internal `/berita/[slug]`. */
 function readUrl(item: Berita) {
   return `/berita/${item.slug}`;
 }
@@ -47,12 +72,21 @@ interface BeritaListSectionProps {
   limit?: number;
 }
 
-export function BeritaListSection({ limit }: BeritaListSectionProps) {
-  const displayedBerita = limit ? dummyBerita.slice(0, limit) : dummyBerita;
+export async function BeritaListSection({ limit }: BeritaListSectionProps) {
+  const all = await getBeritaPublished();
+  const displayed = limit ? all.slice(0, limit) : all;
+
+  if (displayed.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center text-sm text-slate-400">
+        Belum ada berita. Admin akan segera menambahkan kabar terbaru.
+      </div>
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-      {displayedBerita.map((item) => {
+      {displayed.map((item) => {
         const url = readUrl(item);
         return (
           <article
@@ -77,9 +111,7 @@ export function BeritaListSection({ limit }: BeritaListSectionProps) {
                 {item.date}
               </span>
               <h3 className="mt-2 font-heading text-lg font-bold text-slate-900 line-clamp-2 hover:text-emerald-600 transition-colors">
-                <Link href={url}>
-                  {item.title}
-                </Link>
+                <Link href={url}>{item.title}</Link>
               </h3>
               <p className="mt-2 flex-1 text-sm text-slate-500 line-clamp-2">
                 {item.excerpt}
