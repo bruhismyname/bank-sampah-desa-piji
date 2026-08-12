@@ -134,7 +134,7 @@ export function LaporanClient() {
             </div>
 
             {/* Date Inputs */}
-            <form onSubmit={handlePdf} className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <form id="pdf-form" onSubmit={handlePdf} className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="space-y-1">
                 <label
                   htmlFor="mulai"
@@ -178,28 +178,27 @@ export function LaporanClient() {
                   Tanggal mulai tidak boleh setelah tanggal akhir.
                 </p>
               )}
-            </form>
-          </div>
 
-          <div className="pt-8">
-            <button
-              type="submit"
-              form="pdf-form"
-              disabled={memprosesPdf || !rentangValid}
-              className="w-full rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:bg-emerald-400 text-white p-3.5 font-bold text-sm transition-colors flex items-center justify-center gap-2"
-            >
-              {memprosesPdf ? (
-                <>
-                  <RefreshCw className="h-4.5 w-4.5 animate-spin" />
-                  <span>Memproses Laporan...</span>
-                </>
-              ) : (
-                <>
-                  <Download className="h-4.5 w-4.5" />
-                  <span>Generate PDF</span>
-                </>
-              )}
-            </button>
+              <div className="sm:col-span-2 pt-4">
+                <button
+                  type="submit"
+                  disabled={memprosesPdf || !rentangValid}
+                  className="w-full rounded-lg bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 disabled:bg-emerald-400 text-white p-3.5 font-bold text-sm transition-colors flex items-center justify-center gap-2"
+                >
+                  {memprosesPdf ? (
+                    <>
+                      <RefreshCw className="h-4.5 w-4.5 animate-spin" />
+                      <span>Memproses Laporan...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="h-4.5 w-4.5" />
+                      <span>Generate PDF</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
 

@@ -1,13 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { upload } from "@vercel/blob/client";
 import {
   Settings,
   CheckCircle,
   AlertCircle,
   Save,
   Eye,
+  Upload,
+  Trash2,
+  FileText,
+  RefreshCw,
 } from "lucide-react";
 import type { SiteContentDef } from "@/lib/site-content";
 import { saveSiteContent } from "../actions";
@@ -39,10 +44,34 @@ export function KontenClient({ groups, initialValues }: KontenClientProps) {
   const [feedback, setFeedback] = useState<
     { ok: true; message: string } | { ok: false; error: string } | null
   >(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   function setValue(key: string, value: string) {
     setValues((prev) => ({ ...prev, [key]: value }));
     setFeedback(null);
+  }
+
+  /** Upload file ke Vercel Blob via client upload, simpan URL ke state. */
+  async function handleFileUpload(key: string, file: File) {
+    setUploading(true);
+    setFeedback(null);
+    try {
+      const blob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+      });
+      setValue(key, blob.url);
+      // Auto-save langsung supaya URL tersimpan di DB.
+      const res = await saveSiteContent({ [key]: blob.url });
+      setFeedback(res);
+      if (res.ok) router.refresh();
+    } catch (e) {
+      console.error("Upload error:", e);
+      setFeedback({ ok: false, error: "Gagal mengupload file. Coba lagi." });
+    } finally {
+      setUploading(false);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -57,40 +86,92 @@ export function KontenClient({ groups, initialValues }: KontenClientProps) {
   function renderField(item: SiteContentDef) {
     const value = values[item.key] ?? item.defaultValue ?? "";
 
-    // Tipe file: input URL (SOP PDF). Admin menempel link PDF; publik
-    // menampilkannya. Upgrade ke upload Vercel Blob menyusul bila diperlukan.
+    // Tipe file: upload langsung ke Vercel Blob (SOP PDF).
     if (item.type === "file") {
       return (
-        <div className="space-y-1.5">
+        <div className="space-y-3">
           <label
-            htmlFor={`field-${item.key}`}
             className="block text-xs font-bold text-slate-400 uppercase tracking-wide"
           >
             {item.label}
           </label>
-          <div className="flex flex-col sm:flex-row gap-2">
+
+          {/* File yang sudah diupload */}
+          {value ? (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <div className="h-10 w-10 rounded-lg bg-red-50 text-red-500 flex items-center justify-center shrink-0">
+                <FileText className="h-5 w-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-slate-800 truncate">
+                  {value.split("/").pop() || "dokumen-sop.pdf"}
+                </p>
+                <p className="text-[11px] text-slate-400">File PDF sudah diupload</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href={value}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-white px-3 py-2 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-50"
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                  Lihat
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setValue(item.key, "");
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-white px-3 py-2 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Hapus
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 italic">
+              Belum ada file yang diupload.
+            </p>
+          )}
+
+          {/* Tombol upload */}
+          <div>
             <input
-              id={`field-${item.key}`}
-              type="url"
-              value={value}
-              onChange={(e) => setValue(item.key, e.target.value)}
-              placeholder="https://…/dokumen-sop.pdf"
-              className={inputCls}
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(item.key, file);
+                // Reset supaya bisa upload file yang sama lagi
+                e.target.value = "";
+              }}
             />
-            {value && (
-              <a
-                href={value}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100"
-              >
-                <Eye className="h-4 w-4" />
-                Lihat
-              </a>
-            )}
+            <button
+              type="button"
+              disabled={uploading}
+              onClick={() => fileInputRef.current?.click()}
+              className="inline-flex items-center gap-2 rounded-lg border-2 border-dashed border-slate-300 px-5 py-3 text-sm font-semibold text-slate-600 transition-all hover:border-emerald-400 hover:text-emerald-700 hover:bg-emerald-50/30 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {uploading ? (
+                <>
+                  <RefreshCw className="h-4 w-4 animate-spin" />
+                  <span>Mengupload...</span>
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4" />
+                  <span>{value ? "Ganti File PDF" : "Upload File PDF"}</span>
+                </>
+              )}
+            </button>
           </div>
+
           <p className="text-[11px] text-slate-400">
-            Tempel link file PDF. Bila kosong, halaman SOP menampilkan
+            Upload file PDF (maks. 10 MB). Bila kosong, halaman SOP menampilkan
             &quot;Dokumen SOP belum tersedia&quot;.
           </p>
         </div>
